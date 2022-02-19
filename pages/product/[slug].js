@@ -61,7 +61,7 @@ const ProductScreen = () => {
                <Grid item md={12}>
                   <List>
                      <ListItem>
-                        <Typography component='h1' variant='h1'>
+                        <Typography component='h3' variant='h3'>
                            {product.name}
                         </Typography>
                      </ListItem>
