@@ -1,16 +1,13 @@
 import { AppBar, Container, Link, Toolbar, Typography } from '@mui/material'
-import Head from 'next/head'
-import useStyles from '../utils/styles'
+import UseStyles from '../utils/styles'
 import NextLink from 'next/link'
 import Meta from './Meta'
 
 const layout = ({ children }) => {
-   // eslint-disable-next-line react-hooks/rules-of-hooks
-   const classes = useStyles()
+   const classes = UseStyles()
    return (
       <div>
          <Meta />
-         <Head></Head>
          <AppBar position='static' className={classes.navbar}>
             <Toolbar>
                <NextLink href='/' passHref>
