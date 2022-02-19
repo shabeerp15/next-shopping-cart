@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router'
+// import { useRouter } from 'next/router'
 import data from '../../utils/data'
 import Meta from '../../components/Meta'
 import Nextlink from 'next/link'
@@ -14,12 +14,12 @@ import {
 } from '@mui/material'
 import UseStyles from '../../utils/styles'
 import Image from 'next/image'
+import Product from '../../models/Product'
+import db from '../../utils/db'
 
-const ProductScreen = () => {
+const ProductScreen = ({ product }) => {
    const classes = UseStyles()
-   const router = useRouter()
-   const { slug } = router.query
-   const product = data.products.find((p) => p.slug === slug)
+   
    if (!product) {
       return (
          <>
@@ -41,9 +41,7 @@ const ProductScreen = () => {
          <div className={classes.section}>
             <Nextlink href='/' passHref>
                <Link>
-                  <Typography  gutterBottom>
-                     Back to Products
-                  </Typography>
+                  <Typography gutterBottom>Back to Products</Typography>
                </Link>
             </Nextlink>
          </div>
@@ -133,3 +131,17 @@ const ProductScreen = () => {
 }
 
 export default ProductScreen
+
+export async function getServerSideProps(contex) {
+   const { params } = contex
+   const { slug } = params
+
+   db.connect()
+   const product = await Product.findOne({ slug }).lean()
+   await db.disconnect()
+   return {
+      props: {
+         product: db.convertDocToObj(product),
+      },
+   }
+}
