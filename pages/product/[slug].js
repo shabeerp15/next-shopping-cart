@@ -1,5 +1,4 @@
-// import { useRouter } from 'next/router'
-import data from '../../utils/data'
+import { useRouter } from 'next/router'
 import Meta from '../../components/Meta'
 import Nextlink from 'next/link'
 import {
@@ -16,10 +15,27 @@ import UseStyles from '../../utils/styles'
 import Image from 'next/image'
 import Product from '../../models/Product'
 import db from '../../utils/db'
+import { useContext } from 'react'
+import { Store } from '../../utils/Store'
+import axios from 'axios'
 
 const ProductScreen = ({ product }) => {
+   const router = useRouter()
+   const { state, dispatch } = useContext(Store)
    const classes = UseStyles()
-   
+
+   const addToCartHandler = async () => {
+      // const existItem = state.cart.cartItems.find((x) => x._id === product._id)
+      // const quantity = existItem ? existItem.quantity + 1 : 1
+      const { data } = await axios.get(`/api/products/${product._id}`)
+      if (data.countInStock <= 0) {
+         window.alert('Sorry. Product is out of stock')
+         return
+      }
+      dispatch({ type: 'CART_ADD_ITEM', payload: { ...product } })
+      // router.push('/cart')
+   }
+
    if (!product) {
       return (
          <>
@@ -116,7 +132,7 @@ const ProductScreen = ({ product }) => {
                               fullWidth
                               variant='contained'
                               color='primary'
-                              //    onClick={addToCartHandler}
+                              onClick={addToCartHandler}
                            >
                               Add to cart
                            </Button>

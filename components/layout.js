@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect } from 'react'
 import NextLink from 'next/link'
 import {
    AppBar,
@@ -10,15 +10,16 @@ import {
    createTheme,
    ThemeProvider,
    Switch,
+   Badge,
 } from '@mui/material'
 import UseStyles from '../utils/styles'
-import {Store} from '../utils/Store'
+import { Store } from '../utils/Store'
 import Meta from './Meta'
 import Cookies from 'js-cookie'
 
 const Layout = ({ children }) => {
-   const { state, dispatch } = useContext(Store);
-   const { darkMode } = state;
+   const { state, dispatch } = useContext(Store)
+   const { darkMode, cart } = state
    const classes = UseStyles()
    const theme = createTheme({
       typography: {
@@ -36,20 +37,20 @@ const Layout = ({ children }) => {
       palette: {
          type: darkMode ? 'dark' : 'light',
          primary: {
-           main: '#ffc107',
+            main: '#ffc107',
          },
          secondary: {
-           main: '#208080',
+            main: '#208080',
          },
-       },
+      },
    })
 
    const darkModeChangeHandler = () => {
-      dispatch({ type: darkMode ? 'DARK_MODE_OFF' : 'DARK_MODE_ON' });
-    const newDarkMode = !darkMode;
-    Cookies.set('darkMode', newDarkMode ? 'ON' : 'OFF');
+      dispatch({ type: darkMode ? 'DARK_MODE_OFF' : 'DARK_MODE_ON' })
+      const newDarkMode = !darkMode
+      Cookies.set('darkMode', newDarkMode ? 'ON' : 'OFF')
    }
-   console.log(darkMode, 'darkMode');
+   console.log(darkMode, 'darkMode')
    return (
       <div>
          <Meta />
@@ -66,9 +67,23 @@ const Layout = ({ children }) => {
                   </NextLink>
                   <div className='classes.grow'></div>
                   <div>
-                     <Switch checked={darkMode} onChange={darkModeChangeHandler}></Switch>
+                     <Switch
+                        checked={darkMode}
+                        onChange={darkModeChangeHandler}
+                     ></Switch>
                      <NextLink href='/cart' passHref>
-                        <Link>Cart</Link>
+                        <Link>
+                           {cart.cartItems.length > 0 ? (
+                              <Badge
+                                 badgeContent={cart.cartItems.length}
+                                 color='secondary'
+                              >
+                                 Cart
+                              </Badge>
+                           ) : (
+                              'Cart'
+                           )}
+                        </Link>
                      </NextLink>
                      <NextLink href='/login' passHref>
                         <Link>Login</Link>
