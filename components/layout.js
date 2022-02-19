@@ -16,7 +16,7 @@ const layout = ({ children }) => {
          </Head>
          <AppBar position='static' className={classes.navbar}>
             <Toolbar>
-               <Typography variant='title' color='inherit'>
+               <Typography variant='title' color='inherit' className={classes.brand}>
                   Amazon
                </Typography>
             </Toolbar>
