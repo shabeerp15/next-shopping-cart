@@ -1,3 +1,5 @@
+import React, { useContext, useEffect } from 'react';
+import NextLink from 'next/link'
 import {
    AppBar,
    Container,
@@ -5,15 +7,20 @@ import {
    Link,
    Toolbar,
    Typography,
+   createTheme,
+   ThemeProvider,
+   Switch,
 } from '@mui/material'
 import UseStyles from '../utils/styles'
-import NextLink from 'next/link'
+import {Store} from '../utils/Store'
 import Meta from './Meta'
-import { createMuiTheme, ThemeProvider } from '@mui/material/styles';
+import Cookies from 'js-cookie'
 
-const layout = ({ children }) => {
+const Layout = ({ children }) => {
+   const { state, dispatch } = useContext(Store);
+   const { darkMode } = state;
    const classes = UseStyles()
-   const theme = createMuiTheme({
+   const theme = createTheme({
       typography: {
          h1: {
             fontSize: '1.6rem',
@@ -27,15 +34,22 @@ const layout = ({ children }) => {
          },
       },
       palette: {
-         // type: darkMode ? 'dark' : 'light',
+         type: darkMode ? 'dark' : 'light',
          primary: {
-            main: '#f0c000',
+           main: '#ffc107',
          },
          secondary: {
-            main: '#208080',
+           main: '#208080',
          },
-      },
+       },
    })
+
+   const darkModeChangeHandler = () => {
+      dispatch({ type: darkMode ? 'DARK_MODE_OFF' : 'DARK_MODE_ON' });
+    const newDarkMode = !darkMode;
+    Cookies.set('darkMode', newDarkMode ? 'ON' : 'OFF');
+   }
+   console.log(darkMode, 'darkMode');
    return (
       <div>
          <Meta />
@@ -52,6 +66,7 @@ const layout = ({ children }) => {
                   </NextLink>
                   <div className='classes.grow'></div>
                   <div>
+                     <Switch checked={darkMode} onChange={darkModeChangeHandler}></Switch>
                      <NextLink href='/cart' passHref>
                         <Link>Cart</Link>
                      </NextLink>
@@ -72,4 +87,4 @@ const layout = ({ children }) => {
    )
 }
 
-export default layout
+export default Layout
