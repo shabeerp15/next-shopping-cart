@@ -1,11 +1,23 @@
+import { Grid } from '@mui/material'
 import Head from 'next/head'
 import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import ProductItem from '../components/ProductItem'
+import data from '../utils/data'
 
 export default function Home() {
   return (
-    <div className={styles.container}>
-      <h1>hello world!</h1>
+    <div>
+      <h1>Products</h1>
+      <Grid container spacing={3}>
+        {topRatedProducts.map((product) => (
+          <Grid item md={4} key={product.name}>
+            <ProductItem
+              product={product}
+              addToCartHandler={addToCartHandler}
+            />
+          </Grid>
+        ))}
+      </Grid>
     </div>
   )
 }
