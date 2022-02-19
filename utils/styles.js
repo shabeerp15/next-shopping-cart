@@ -11,6 +11,9 @@ const useStyles = makeStyles(theme => ({
    brand: {
     fontWeight: 'bold',
     fontSize: '1.5rem',
+    '&:hover': {
+      color: '#ffc107',
+    }
   },
   grow: {
     flexGrow: 1,
