@@ -35,7 +35,7 @@ const Layout = ({ children }) => {
          },
       },
       palette: {
-         type: darkMode ? 'dark' : 'light',
+         mode: darkMode ? 'dark' : 'light',
          primary: {
             main: '#ffc107',
          },
@@ -65,7 +65,7 @@ const Layout = ({ children }) => {
                         </Typography>
                      </Link>
                   </NextLink>
-                  <div className='classes.grow'></div>
+                  <div className={classes.grow}></div>
                   <div>
                      <Switch
                         checked={darkMode}

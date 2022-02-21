@@ -33,7 +33,7 @@ const ProductScreen = ({ product }) => {
          return
       }
       dispatch({ type: 'CART_ADD_ITEM', payload: { ...product } })
-      // router.push('/cart')
+      router.push('/cart')
    }
 
    if (!product) {
