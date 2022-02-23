@@ -20,6 +20,7 @@ import Meta from '../components/Meta'
 import { Store } from '../utils/Store'
 import NextLink from 'next/link'
 import Image from 'next/image'
+import dynamic from 'next/dynamic'
 
 const CartScreen = () => {
    const { state } = useContext(Store)
@@ -52,7 +53,7 @@ const CartScreen = () => {
                            </TableRow>
                         </TableHead>
                         <TableBody>
-                           {cartItems.map((item) => (
+                           {cartItems?.map((item) => (
                               <TableRow key={item._id}>
                                  <TableCell>
                                     <NextLink
@@ -82,8 +83,7 @@ const CartScreen = () => {
                                  </TableCell>
                                  <TableCell align='right'>
                                     <Select
-                                       value={item.countInStock}
-                                    //    value={item.quantity}
+                                       value={item.quantity}
                                        //    onChange={(e) =>
                                        //       updateCartHandler(
                                        //          item,
@@ -107,7 +107,7 @@ const CartScreen = () => {
                                     <Button
                                        variant='contained'
                                        color='secondary'
-                                    //    onClick={() => removeItemHandler(item)}
+                                       //    onClick={() => removeItemHandler(item)}
                                     >
                                        x
                                     </Button>
@@ -124,7 +124,7 @@ const CartScreen = () => {
                         <ListItem>
                            <Typography variant='h2'>
                               Subtotal (
-                              {cartItems.reduce((a, c) => a + c.quantity, 0)}{' '}
+                              {cartItems.reduce((a, c) => a + c.quantity, 0)}
                               items) : $
                               {cartItems.reduce(
                                  (a, c) => a + c.quantity * c.price,
@@ -151,4 +151,4 @@ const CartScreen = () => {
    )
 }
 
-export default CartScreen
+export default dynamic(() => Promise.resolve(CartScreen), { ssr: false })  // for SSR to work with dynamic components (not needed for SSR)
