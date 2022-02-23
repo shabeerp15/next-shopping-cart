@@ -1,7 +1,7 @@
 import { Button, Card, CardActionArea, CardActions, CardContent, CardMedia, Rating, Typography } from '@mui/material'
 import NextLink from 'next/link';
 
-const ProductItem = ({ product }) => {
+const ProductItem = ({ product, addToCartHandler }) => {
    return (
       <Card>
          <NextLink href={`/product/${product.slug}`} passHref>
@@ -22,7 +22,7 @@ const ProductItem = ({ product }) => {
             <Button
                size='small'
                color='primary'
-            //    onClick={() => addToCartHandler(product)}
+               onClick={() => addToCartHandler(product)}
             >
                Add to cart
             </Button>

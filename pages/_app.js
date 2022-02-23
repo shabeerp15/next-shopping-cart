@@ -2,6 +2,8 @@ import '../styles/globals.css'
 import Layout from '../components/Layout'
 import { useEffect } from 'react'
 import { StoreProvider } from '../utils/Store'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 function MyApp({ Component, pageProps }) {
    useEffect(() => {
@@ -15,6 +17,11 @@ function MyApp({ Component, pageProps }) {
          <StoreProvider>
             <Layout>
                <Component {...pageProps} />
+               <ToastContainer
+                  position='top-center'
+                  autoClose={1000}
+                  pauseOnHover={false}
+               />
             </Layout>
          </StoreProvider>
       </>

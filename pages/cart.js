@@ -21,13 +21,27 @@ import { Store } from '../utils/Store'
 import NextLink from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
+import axios from 'axios'
 
 const CartScreen = () => {
-   const { state } = useContext(Store)
+   const { state, dispatch } = useContext(Store)
    const {
       cart: { cartItems },
    } = state
-   console.log(cartItems, 'cartItems')
+
+   const updateCartHandler = async (item, quantity) => {
+      const { data } = await axios.get(`/api/products/${item._id}`)
+      if (data.countInStock < quantity) {
+         window.alert('Sorry. Product is out of stock')
+         return
+      }
+      dispatch({ type: 'CART_ADD_ITEM', payload: { ...item, quantity } })
+   }
+
+   const removeItemHandler = (item) => {
+      dispatch({ type: 'CART_REMOVE_ITEM', payload: item })
+   }
+
    return (
       <>
          <Meta title={'Cart'} description={'Cart'} keywords={'Cart'} />
@@ -84,12 +98,12 @@ const CartScreen = () => {
                                  <TableCell align='right'>
                                     <Select
                                        value={item.quantity}
-                                       //    onChange={(e) =>
-                                       //       updateCartHandler(
-                                       //          item,
-                                       //          e.target.value
-                                       //       )
-                                       //    }
+                                       onChange={(e) =>
+                                          updateCartHandler(
+                                             item,
+                                             e.target.value
+                                          )
+                                       }
                                     >
                                        {[
                                           ...Array(item.countInStock).keys(),
@@ -107,7 +121,7 @@ const CartScreen = () => {
                                     <Button
                                        variant='contained'
                                        color='secondary'
-                                       //    onClick={() => removeItemHandler(item)}
+                                       onClick={() => removeItemHandler(item)}
                                     >
                                        x
                                     </Button>
@@ -151,4 +165,4 @@ const CartScreen = () => {
    )
 }
 
-export default dynamic(() => Promise.resolve(CartScreen), { ssr: false })  // for SSR to work with dynamic components (not needed for SSR)
+export default dynamic(() => Promise.resolve(CartScreen), { ssr: false }) // for SSR to work with dynamic components (not needed for SSR)
