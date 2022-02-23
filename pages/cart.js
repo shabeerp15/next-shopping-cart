@@ -22,8 +22,10 @@ import NextLink from 'next/link'
 import Image from 'next/image'
 import dynamic from 'next/dynamic'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 
 const CartScreen = () => {
+   const router = useRouter()
    const { state, dispatch } = useContext(Store)
    const {
       cart: { cartItems },
@@ -40,6 +42,10 @@ const CartScreen = () => {
 
    const removeItemHandler = (item) => {
       dispatch({ type: 'CART_REMOVE_ITEM', payload: item })
+   }
+
+   const checkoutHandler = () => {
+      router.push('/shipping')
    }
 
    return (
@@ -148,7 +154,7 @@ const CartScreen = () => {
                         </ListItem>
                         <ListItem>
                            <Button
-                              // onClick={checkoutHandler}
+                              onClick={checkoutHandler}
                               variant='contained'
                               color='primary'
                               fullWidth

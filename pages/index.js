@@ -1,6 +1,5 @@
 import { Grid } from '@mui/material'
 import ProductItem from '../components/ProductItem'
-// import data from '../utils/data'
 import db from '../utils/db'
 import Product from '../models/Product'
 import { useContext } from 'react'

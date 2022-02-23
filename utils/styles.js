@@ -1,6 +1,6 @@
 import { makeStyles } from '@mui/styles';
 
-const UseStyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme => ({
    navbar: {
       backgroundColor: '#203040',
       '& a': {
@@ -107,4 +107,4 @@ const UseStyles = makeStyles(theme => ({
   },
 }))
 
-export default UseStyles
+export default useStyles

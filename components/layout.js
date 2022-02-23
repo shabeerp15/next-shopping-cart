@@ -12,7 +12,7 @@ import {
    Switch,
    Badge,
 } from '@mui/material'
-import UseStyles from '../utils/styles'
+import useStyles from '../utils/styles'
 import { Store } from '../utils/Store'
 import Meta from './Meta'
 import Cookies from 'js-cookie'
@@ -20,7 +20,7 @@ import Cookies from 'js-cookie'
 const Layout = ({ children }) => {
    const { state, dispatch } = useContext(Store)
    const { darkMode, cart } = state
-   const classes = UseStyles()
+   const classes = useStyles()
    const theme = createTheme({
       typography: {
          h1: {
