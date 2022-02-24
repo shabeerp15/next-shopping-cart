@@ -7,7 +7,7 @@ import {
    Link,
 } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect } from 'react'
 import Meta from '../components/Meta'
 import NextLink from 'next/link'
 import useStyles from '../utils/styles'
@@ -18,6 +18,11 @@ import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 
 const LoginScreen = () => {
+   const {
+      control,
+      handleSubmit,
+      formState: { errors },
+   } = useForm()
    const router = useRouter()
    const { redirect } = router.query
    const { state, dispatch } = useContext(Store)
@@ -29,12 +34,9 @@ const LoginScreen = () => {
       }
    }, [])
 
-   const [email, setEmail] = useState('')
-   const [password, setPassword] = useState('')
    const classes = useStyles()
 
-   const submitHandler = async (e) => {
-      e.preventDefault()
+   const submitHandler = async ({ email, password }) => {
       try {
          const { data } = await axios.post('/api/users/login', {
             email,
@@ -58,24 +60,15 @@ const LoginScreen = () => {
             description={'Login page'}
             keywords={'login, amazon, shopping'}
          />
-         <form className={classes.form} onSubmit={submitHandler}>
+         <form className={classes.form} onSubmit={handleSubmit(submitHandler)}>
             <Typography component='h1' variant='h1'>
                Login
             </Typography>
             <List>
                <ListItem>
-                  <TextField
-                     variant='outlined'
-                     fullWidth
-                     id='email'
-                     label='Email'
-                     inputProps={{ type: 'email' }}
-                     onChange={(e) => setEmail(e.target.value)}
-                  ></TextField>
-
-                  {/* <Controller
+                  <Controller
                      name='email'
-                    //  control={control}
+                     control={control}
                      defaultValue=''
                      rules={{
                         required: true,
@@ -99,22 +92,13 @@ const LoginScreen = () => {
                            {...field}
                         ></TextField>
                      )}
-                  ></Controller> */}
+                  ></Controller>
                </ListItem>
 
                <ListItem>
-                  <TextField
-                     variant='outlined'
-                     fullWidth
-                     id='password'
-                     label='Password'
-                     inputProps={{ type: 'password' }}
-                     onChange={(e) => setPassword(e.target.value)}
-                  ></TextField>
-
-                  {/* <Controller
+                  <Controller
                      name='password'
-                    //  control={control}
+                     control={control}
                      defaultValue=''
                      rules={{
                         required: true,
@@ -138,7 +122,7 @@ const LoginScreen = () => {
                            {...field}
                         ></TextField>
                      )}
-                  ></Controller> */}
+                  ></Controller>
                </ListItem>
                <ListItem>
                   <Button
