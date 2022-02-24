@@ -7,14 +7,28 @@ import {
    Link,
 } from '@mui/material'
 import { Controller, useForm } from 'react-hook-form'
-import React, { useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Meta from '../components/Meta'
 import NextLink from 'next/link'
 import useStyles from '../utils/styles'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { Store } from '../utils/Store'
+import { useRouter } from 'next/router'
+import Cookies from 'js-cookie'
 
 const LoginScreen = () => {
+   const router = useRouter();
+   const { redirect } = router.query;
+   const { state, dispatch } = useContext(Store)
+   const { userInfo } = state
+
+   useEffect(() => {
+      if (userInfo) {
+        router.push('/');
+      }
+    }, []);
+
    const [email, setEmail] = useState('')
    const [password, setPassword] = useState('')
    const classes = useStyles()
@@ -23,6 +37,9 @@ const LoginScreen = () => {
       e.preventDefault()
       try {
          const { data } = await axios.post('/api/users/login', {email, password})
+         dispatch({ type: 'USER_LOGIN', payload: data })
+         Cookies.set('userInfo', JSON.stringify(data))
+         router.push(redirect || '/')
          toast.success('Login successful')
       } catch (error) {
          toast.error(error.response.data.message || error.message)
