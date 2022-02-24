@@ -18,16 +18,16 @@ import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 
 const LoginScreen = () => {
-   const router = useRouter();
-   const { redirect } = router.query;
+   const router = useRouter()
+   const { redirect } = router.query
    const { state, dispatch } = useContext(Store)
    const { userInfo } = state
 
    useEffect(() => {
       if (userInfo) {
-        router.push('/');
+         router.push('/')
       }
-    }, []);
+   }, [])
 
    const [email, setEmail] = useState('')
    const [password, setPassword] = useState('')
@@ -36,13 +36,18 @@ const LoginScreen = () => {
    const submitHandler = async (e) => {
       e.preventDefault()
       try {
-         const { data } = await axios.post('/api/users/login', {email, password})
+         const { data } = await axios.post('/api/users/login', {
+            email,
+            password,
+         })
          dispatch({ type: 'USER_LOGIN', payload: data })
          Cookies.set('userInfo', JSON.stringify(data))
          router.push(redirect || '/')
          toast.success('Login successful')
       } catch (error) {
-         toast.error(error.response.data.message || error.message)
+         toast.error(
+            error.response ? error.response.data.message : error.message
+         )
       }
    }
 
@@ -65,7 +70,7 @@ const LoginScreen = () => {
                      id='email'
                      label='Email'
                      inputProps={{ type: 'email' }}
-                     onChange={e => setEmail(e.target.value)}
+                     onChange={(e) => setEmail(e.target.value)}
                   ></TextField>
 
                   {/* <Controller
@@ -104,7 +109,7 @@ const LoginScreen = () => {
                      id='password'
                      label='Password'
                      inputProps={{ type: 'password' }}
-                     onChange={e => setPassword(e.target.value)}
+                     onChange={(e) => setPassword(e.target.value)}
                   ></TextField>
 
                   {/* <Controller
@@ -148,9 +153,8 @@ const LoginScreen = () => {
                <ListItem>
                   Don&apos;t have an account? &nbsp;
                   <NextLink
-                    //  href={`/register?redirect=${redirect || '/'}`}
-                        href={`/register`}
-                        passHref
+                     href={`/register?redirect=${redirect || '/'}`}
+                     passHref
                   >
                      <Link>Register</Link>
                   </NextLink>
