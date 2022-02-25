@@ -39,6 +39,7 @@ const useStyles = makeStyles(theme => ({
     textTransform: 'initial',
   },
   transparentBackgroud: {
+    marginBlockStart: 10,
     backgroundColor: 'transparent',
   },
   error: {

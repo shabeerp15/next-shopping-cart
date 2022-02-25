@@ -11,9 +11,9 @@ const initialState = {
     shippingAddress: Cookies.get('shippingAddress')
       ? JSON.parse(Cookies.get('shippingAddress'))
       : { location: {} },
-    // paymentMethod: Cookies.get('paymentMethod')
-    //   ? Cookies.get('paymentMethod')
-    //   : '',
+    paymentMethod: Cookies.get('paymentMethod')
+      ? Cookies.get('paymentMethod')
+      : '',
   },
   userInfo: Cookies.get('userInfo')
     ? JSON.parse(Cookies.get('userInfo'))
@@ -68,11 +68,11 @@ function reducer(state, action) {
     //       },
     //     },
     //   };
-    // case 'SAVE_PAYMENT_METHOD':
-    //   return {
-    //     ...state,
-    //     cart: { ...state.cart, paymentMethod: action.payload },
-    //   };
+    case 'SAVE_PAYMENT_METHOD':
+      return {
+        ...state,
+        cart: { ...state.cart, paymentMethod: action.payload },
+      };
     // case 'CART_CLEAR':
     //   return { ...state, cart: { ...state.cart, cartItems: [] } };
     case 'USER_LOGIN':
