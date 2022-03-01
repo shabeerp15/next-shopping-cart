@@ -10,7 +10,23 @@ import CheckoutWizard from '../components/CheckoutWizard'
 import Cookies from 'js-cookie'
 import { toast } from 'react-toastify'
 import Meta from '../components/Meta'
-import { Button, Card, CircularProgress, Grid, Link, List, ListItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography } from '@mui/material'
+import {
+   Button,
+   Card,
+   CircularProgress,
+   Grid,
+   Link,
+   List,
+   ListItem,
+   Table,
+   TableBody,
+   TableCell,
+   TableContainer,
+   TableHead,
+   TableRow,
+   Typography,
+} from '@mui/material'
+import { getError } from '../utils/error';
 
 const PlaceOrderScreen = () => {
    const classes = useStyles()
@@ -163,7 +179,9 @@ const PlaceOrderScreen = () => {
                                           </Typography>
                                        </TableCell>
                                        <TableCell align='right'>
-                                          <Typography>$ {item.price}</Typography>
+                                          <Typography>
+                                             $ {item.price}
+                                          </Typography>
                                        </TableCell>
                                     </TableRow>
                                  ))}
