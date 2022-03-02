@@ -192,7 +192,7 @@ const Order = ({ params }) => {
                            <ListItem>
                               Status:{' '}
                               {isDelivered
-                                 ? `Delivered on ${deliveredAt}`
+                                 ? `Delivered on ${moment(deliveredAt).fromNow()}`
                                  : 'Pending'}
                            </ListItem>
                         </List>
