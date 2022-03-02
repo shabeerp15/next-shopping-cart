@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { StoreProvider } from '../utils/Store'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { PayPalScriptProvider } from '@paypal/react-paypal-js'
 
 function MyApp({ Component, pageProps }) {
    useEffect(() => {
@@ -15,14 +16,16 @@ function MyApp({ Component, pageProps }) {
    return (
       <>
          <StoreProvider>
-            <Layout>
-               <Component {...pageProps} />
-               <ToastContainer
-                  position='top-center'
-                  autoClose={1000}
-                  pauseOnHover={false}
-               />
-            </Layout>
+            <PayPalScriptProvider deferLoading={true}>
+               <Layout>
+                  <Component {...pageProps} />
+                  <ToastContainer
+                     position='top-center'
+                     autoClose={1000}
+                     pauseOnHover={false}
+                  />
+               </Layout>
+            </PayPalScriptProvider>
          </StoreProvider>
       </>
    )
