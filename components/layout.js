@@ -128,7 +128,11 @@ const Layout = ({ children }) => {
                               open={Boolean(anchorEl)}
                               onClose={loginMenuCloseHandler}
                            >
-                              <MenuItem onClick={(e)=>loginMenuCloseHandler(e, '/profile')}>
+                              <MenuItem
+                                 onClick={(e) =>
+                                    loginMenuCloseHandler(e, '/profile')
+                                 }
+                              >
                                  Profile
                               </MenuItem>
                               <MenuItem
@@ -138,6 +142,18 @@ const Layout = ({ children }) => {
                               >
                                  Order History
                               </MenuItem>
+                              {userInfo.isAdmin && (
+                                 <MenuItem
+                                    onClick={(e) =>
+                                       loginMenuCloseHandler(
+                                          e,
+                                          '/admin/dashboard'
+                                       )
+                                    }
+                                 >
+                                    Admin Dashboard
+                                 </MenuItem>
+                              )}
                               <MenuItem onClick={logoutClickHandler}>
                                  Logout
                               </MenuItem>
