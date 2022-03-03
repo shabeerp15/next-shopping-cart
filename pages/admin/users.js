@@ -3,11 +3,6 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import NextLink from 'next/link'
 import React, { useEffect, useContext, useReducer } from 'react'
-import { getError } from '../../utils/error'
-import { Store } from '../../utils/Store'
-import Layout from '../../components/Layout'
-import useStyles from '../../utils/styles'
-import Meta from '../../components/Meta'
 import {
    CircularProgress,
    Grid,
@@ -24,31 +19,47 @@ import {
    TableCell,
    TableBody,
 } from '@mui/material'
+import { getError } from '../../utils/error'
+import { Store } from '../../utils/Store'
+import Layout from '../../components/Layout'
+import useStyles from '../../utils/styles'
+import { toast } from 'react-toastify'
+import Meta from '../../components/Meta'
 
 function reducer(state, action) {
    switch (action.type) {
       case 'FETCH_REQUEST':
          return { ...state, loading: true, error: '' }
       case 'FETCH_SUCCESS':
-         return { ...state, loading: false, orders: action.payload, error: '' }
+         return { ...state, loading: false, users: action.payload, error: '' }
       case 'FETCH_FAIL':
          return { ...state, loading: false, error: action.payload }
+
+      case 'DELETE_REQUEST':
+         return { ...state, loadingDelete: true }
+      case 'DELETE_SUCCESS':
+         return { ...state, loadingDelete: false, successDelete: true }
+      case 'DELETE_FAIL':
+         return { ...state, loadingDelete: false }
+      case 'DELETE_RESET':
+         return { ...state, loadingDelete: false, successDelete: false }
       default:
          state
    }
 }
 
-const AdminOrderList = () => {
+const AdminUsersList = () => {
    const { state } = useContext(Store)
    const router = useRouter()
    const classes = useStyles()
    const { userInfo } = state
 
-   const [{ loading, error, orders }, dispatch] = useReducer(reducer, {
-      loading: true,
-      orders: [],
-      error: '',
-   })
+   const [{ loading, error, users, successDelete, loadingDelete }, dispatch] =
+      useReducer(reducer, {
+         loading: true,
+         users: [],
+         error: '',
+      })
 
    useEffect(() => {
       if (!userInfo) {
@@ -57,7 +68,7 @@ const AdminOrderList = () => {
       const fetchData = async () => {
          try {
             dispatch({ type: 'FETCH_REQUEST' })
-            const { data } = await axios.get(`/api/admin/orders`, {
+            const { data } = await axios.get(`/api/admin/users`, {
                headers: { authorization: `Bearer ${userInfo.token}` },
             })
             dispatch({ type: 'FETCH_SUCCESS', payload: data })
@@ -65,15 +76,33 @@ const AdminOrderList = () => {
             dispatch({ type: 'FETCH_FAIL', payload: getError(err) })
          }
       }
-      fetchData()
-   }, [])
+      if (successDelete) {
+         dispatch({ type: 'DELETE_RESET' })
+      } else {
+         fetchData()
+      }
+   }, [successDelete])
+
+   const deleteHandler = async (userId) => {
+      if (!window.confirm('Are you sure?')) {
+         return
+      }
+      try {
+         dispatch({ type: 'DELETE_REQUEST' })
+         await axios.delete(`/api/admin/users/${userId}`, {
+            headers: { authorization: `Bearer ${userInfo.token}` },
+         })
+         dispatch({ type: 'DELETE_SUCCESS' })
+         toast.success('User deleted successfully')
+      } catch (err) {
+         dispatch({ type: 'DELETE_FAIL' })
+         toast.error(getError(err))
+      }
+   }
+
    return (
       <>
-         <Meta
-            title='Admin Order List Page'
-            description='Admin Order List Page'
-            keywords='Admin Order List Page'
-         />
+         <Meta title='Users' />
          <Grid container spacing={1}>
             <Grid item md={3} xs={12}>
                <Card className={classes.section}>
@@ -84,7 +113,7 @@ const AdminOrderList = () => {
                         </ListItem>
                      </NextLink>
                      <NextLink href='/admin/orders' passHref>
-                        <ListItem selected button component='a'>
+                        <ListItem button component='a'>
                            <ListItemText primary='Orders'></ListItemText>
                         </ListItem>
                      </NextLink>
@@ -94,7 +123,7 @@ const AdminOrderList = () => {
                         </ListItem>
                      </NextLink>
                      <NextLink href='/admin/users' passHref>
-                        <ListItem button component='a'>
+                        <ListItem selected button component='a'>
                            <ListItemText primary='Users'></ListItemText>
                         </ListItem>
                      </NextLink>
@@ -106,8 +135,9 @@ const AdminOrderList = () => {
                   <List>
                      <ListItem>
                         <Typography component='h1' variant='h1'>
-                           Orders
+                           Users
                         </Typography>
+                        {loadingDelete && <CircularProgress />}
                      </ListItem>
 
                      <ListItem>
@@ -123,50 +153,44 @@ const AdminOrderList = () => {
                                  <TableHead>
                                     <TableRow>
                                        <TableCell>ID</TableCell>
-                                       <TableCell>USER</TableCell>
-                                       <TableCell>DATE</TableCell>
-                                       <TableCell>TOTAL</TableCell>
-                                       <TableCell>PAID</TableCell>
-                                       <TableCell>DELIVERED</TableCell>
-                                       <TableCell>ACTION</TableCell>
+                                       <TableCell>NAME</TableCell>
+                                       <TableCell>EMAIL</TableCell>
+                                       <TableCell>ISADMIN</TableCell>
+                                       <TableCell>ACTIONS</TableCell>
                                     </TableRow>
                                  </TableHead>
                                  <TableBody>
-                                    {orders.map((order) => (
-                                       <TableRow key={order._id}>
+                                    {users.map((user) => (
+                                       <TableRow key={user._id}>
                                           <TableCell>
-                                             {order._id.substring(20, 24)}
+                                             {user._id.substring(20, 24)}
                                           </TableCell>
+                                          <TableCell>{user.name}</TableCell>
+                                          <TableCell>{user.email}</TableCell>
                                           <TableCell>
-                                             {order.user
-                                                ? order.user.name
-                                                : 'DELETED USER'}
-                                          </TableCell>
-                                          <TableCell>
-                                             {order.createdAt}
-                                          </TableCell>
-                                          <TableCell>
-                                             $ {order.totalPrice}
-                                          </TableCell>
-                                          <TableCell>
-                                             {order.isPaid
-                                                ? `paid at ${order.paidAt}`
-                                                : 'not paid'}
-                                          </TableCell>
-                                          <TableCell>
-                                             {order.isDelivered
-                                                ? `delivered at ${order.deliveredAt}`
-                                                : 'not delivered'}
+                                             {user.isAdmin ? 'YES' : 'NO'}
                                           </TableCell>
                                           <TableCell>
                                              <NextLink
-                                                href={`/order/${order._id}`}
+                                                href={`/admin/user/${user._id}`}
                                                 passHref
                                              >
-                                                <Button variant='contained'>
-                                                   Details
+                                                <Button
+                                                   size='small'
+                                                   variant='contained'
+                                                >
+                                                   Edit
                                                 </Button>
-                                             </NextLink>
+                                             </NextLink>{' '}
+                                             <Button
+                                                onClick={() =>
+                                                   deleteHandler(user._id)
+                                                }
+                                                size='small'
+                                                variant='contained'
+                                             >
+                                                Delete
+                                             </Button>
                                           </TableCell>
                                        </TableRow>
                                     ))}
@@ -183,4 +207,4 @@ const AdminOrderList = () => {
    )
 }
 
-export default AdminOrderList
+export default dynamic(() => Promise.resolve(AdminUsersList), { ssr: false })

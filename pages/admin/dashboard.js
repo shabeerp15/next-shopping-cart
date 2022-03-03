@@ -51,7 +51,7 @@ const AdminDashboard = () => {
       if (!userInfo) {
          router.push('/login')
       }
-      if(!userInfo.isAdmin) {
+      if (!userInfo.isAdmin) {
          router.push('/')
       }
       const fetchData = async () => {
@@ -88,6 +88,11 @@ const AdminDashboard = () => {
                      <NextLink href='/admin/products' passHref>
                         <ListItem button component='a'>
                            <ListItemText primary='Products'></ListItemText>
+                        </ListItem>
+                     </NextLink>
+                     <NextLink href='/admin/users' passHref>
+                        <ListItem button component='a'>
+                           <ListItemText primary='Users'></ListItemText>
                         </ListItem>
                      </NextLink>
                   </List>
