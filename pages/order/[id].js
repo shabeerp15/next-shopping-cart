@@ -137,6 +137,7 @@ const Order = ({ params }) => {
          }
          loadPaypalScript()
       }
+   // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [order, successPay, successDeliver])
 
    async function deliverOrderHandler() {

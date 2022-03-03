@@ -81,6 +81,7 @@ const AdminUsersList = () => {
       } else {
          fetchData()
       }
+   // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [successDelete])
 
    const deleteHandler = async (userId) => {

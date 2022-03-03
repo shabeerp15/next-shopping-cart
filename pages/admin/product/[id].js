@@ -102,6 +102,7 @@ function ProductEdit({ params }) {
          }
          fetchData()
       }
+   // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [])
 
    const uploadHandler = async (e, imageField = 'image') => {

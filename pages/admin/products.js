@@ -92,6 +92,7 @@ function AdminProdcutsList() {
       } else {
          fetchData()
       }
+   // eslint-disable-next-line react-hooks/exhaustive-deps
    }, [successDelete])
 
    const createHandler = async () => {
