@@ -4,25 +4,78 @@ import Nextlink from 'next/link'
 import {
    Button,
    Card,
+   CircularProgress,
    Grid,
    Link,
    List,
    ListItem,
    Rating,
+   TextField,
    Typography,
 } from '@mui/material'
 import UseStyles from '../../utils/styles'
 import Image from 'next/image'
 import Product from '../../models/Product'
 import db from '../../utils/db'
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Store } from '../../utils/Store'
 import axios from 'axios'
+import { getError } from '../../utils/error'
+import { toast } from 'react-toastify'
 
 const ProductScreen = ({ product }) => {
    const router = useRouter()
    const { state, dispatch } = useContext(Store)
+   const { userInfo } = state
    const classes = UseStyles()
+
+   const [reviews, setReviews] = useState([])
+   const [rating, setRating] = useState(0)
+   const [comment, setComment] = useState('')
+   const [loading, setLoading] = useState(false)
+   console.log(reviews, 'reviews')
+
+   const submitHandler = async (e) => {
+      e.preventDefault()
+      setLoading(true)
+      try {
+         await axios.post(
+            `/api/products/${product._id}/reviews`,
+            {
+               rating,
+               comment,
+            },
+            {
+               headers: { authorization: `Bearer ${userInfo.token}` },
+            }
+         )
+         setLoading(false)
+         toast.success('Review submitted successfully')
+         setComment('')
+         setRating(0)
+         fetchReviews()
+         // router.reload()
+      } catch (err) {
+         setLoading(false)
+         toast.error(getError(err))
+      }
+   }
+
+   const fetchReviews = async () => {
+      try {
+         const { data } = await axios.get(
+            `/api/products/${product._id}/reviews`
+         )
+
+         setReviews(data)
+      } catch (err) {
+         toast.error(getError(err))
+      }
+   }
+
+   useEffect(() => {
+      fetchReviews()
+   }, [])
 
    const addToCartHandler = async () => {
       const existItem = state.cart.cartItems.find((x) => x._id === product._id)
@@ -142,6 +195,86 @@ const ProductScreen = ({ product }) => {
                </Grid>
             </Grid>
          </Grid>
+         <List>
+            <ListItem>
+               <Typography name='reviews' id='reviews' variant='h2'>
+                  Customer Reviews
+               </Typography>
+            </ListItem>
+            {reviews?.length === 0 ? (
+               <ListItem>No review</ListItem>
+            ) : (
+               reviews.map((review) => (
+                  <ListItem key={review._id}>
+                     <Grid container>
+                        <Grid item className={classes.reviewItem}>
+                           <Typography>
+                              <strong>{review.name}</strong>
+                           </Typography>
+                           <Typography>
+                              {review.createdAt.substring(0, 10)}
+                           </Typography>
+                        </Grid>
+                        <Grid item>
+                           <Rating value={review.rating} readOnly></Rating>
+                           <Typography>{review.comment}</Typography>
+                        </Grid>
+                     </Grid>
+                  </ListItem>
+               ))
+            )}
+            <ListItem>
+               {userInfo && !userInfo.isAdmin ? (
+                  <form onSubmit={submitHandler} className={classes.reviewForm}>
+                     <List>
+                        <ListItem>
+                           <Typography variant='h2'>
+                              Leave your review
+                           </Typography>
+                        </ListItem>
+                        <ListItem>
+                           <TextField
+                              multiline
+                              variant='outlined'
+                              fullWidth
+                              name='review'
+                              label='Enter comment'
+                              value={comment}
+                              onChange={(e) => setComment(e.target.value)}
+                           />
+                        </ListItem>
+                        <ListItem>
+                           <Rating
+                              name='simple-controlled'
+                              value={rating}
+                              onChange={(e) => setRating(e.target.value)}
+                           />
+                        </ListItem>
+                        <ListItem>
+                           <Button
+                              type='submit'
+                              fullWidth
+                              variant='contained'
+                              color='primary'
+                           >
+                              Submit
+                           </Button>
+
+                           {loading && <CircularProgress></CircularProgress>}
+                        </ListItem>
+                     </List>
+                  </form>
+               ) : (
+                  <Typography variant='h2'>
+                     Please{' '}
+                     <Link href={`/login?redirect=/product/${product.slug}`}>
+                        login
+                     </Link>{' '}
+                     to write a review
+                  </Typography>
+               )}
+            </ListItem>
+         </List>
       </>
    )
 }
@@ -153,7 +286,7 @@ export async function getServerSideProps(contex) {
    const { slug } = params
 
    db.connect()
-   const product = await Product.findOne({ slug }).lean()
+   const product = await Product.findOne({ slug }, '-reviews').lean()
    await db.disconnect()
    return {
       props: {

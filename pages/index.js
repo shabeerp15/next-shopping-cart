@@ -43,7 +43,7 @@ export default function Home({ products }) {
 
 export async function getServerSideProps() {
    db.connect()
-   const products = await Product.find({}).lean()
+   const products = await Product.find({}, '-reviews').lean()
    await db.disconnect()
    return {
       props: {
