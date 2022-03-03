@@ -2,6 +2,7 @@ import { makeStyles } from '@mui/styles';
 
 const useStyles = makeStyles(theme => ({
    navbar: {
+     
       backgroundColor: '#203040',
       '& a': {
          color: 'white',

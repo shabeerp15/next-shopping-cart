@@ -21,6 +21,7 @@ import {
    ListItem,
    Divider,
    ListItemText,
+   InputBase,
 } from '@mui/material'
 import useStyles from '../utils/styles'
 import { Store } from '../utils/Store'
@@ -30,8 +31,9 @@ import { useRouter } from 'next/router'
 import { getError } from '../utils/error'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import MenuIcon from '@mui/icons-material/Menu';
-import CancelIcon  from '@mui/icons-material/Cancel';
+import MenuIcon from '@mui/icons-material/Menu'
+import CancelIcon from '@mui/icons-material/Cancel'
+import SearchIcon from '@mui/icons-material/Search'
 
 const Layout = ({ children }) => {
    const router = useRouter()
@@ -56,6 +58,15 @@ const Layout = ({ children }) => {
       } catch (err) {
          toast.error(getError(err))
       }
+   }
+
+   const [query, setQuery] = useState('')
+   const queryChangeHandler = (e) => {
+      setQuery(e.target.value)
+   }
+   const submitHandler = (e) => {
+      e.preventDefault()
+      router.push(`/search?query=${query}`)
    }
 
    useEffect(() => {
@@ -125,6 +136,7 @@ const Layout = ({ children }) => {
                         edge='start'
                         aria-label='open drawer'
                         onClick={sidebarOpenHandler}
+                        className={classes.menuButton}
                      >
                         <MenuIcon className={classes.navbarButton} />
                      </IconButton>
@@ -143,18 +155,40 @@ const Layout = ({ children }) => {
                   >
                      <List>
                         <ListItem>
+                           <div className={classes.searchSection}>
+                              <form
+                                 onSubmit={submitHandler}
+                                 className={classes.searchForm}
+                              >
+                                 <InputBase
+                                    name='query'
+                                    className={classes.searchInput}
+                                    placeholder='Search products'
+                                    onChange={queryChangeHandler}
+                                 />
+                                 <IconButton
+                                    type='submit'
+                                    className={classes.iconButton}
+                                    aria-label='search'
+                                 >
+                                    <SearchIcon />
+                                 </IconButton>
+                              </form>
+                           </div>
+                           {/* <IconButton
+                              aria-label='close'
+                              onClick={sidebarCloseHandler}
+                           >
+                              <CancelIcon />
+                           </IconButton> */}
+                        </ListItem>
+                        <ListItem>
                            <Box
                               display='flex'
                               alignItems='center'
                               justifyContent='space-between'
                            >
                               <Typography>Shopping by category</Typography>
-                              <IconButton
-                                 aria-label='close'
-                                 onClick={sidebarCloseHandler}
-                              >
-                                 <CancelIcon />
-                              </IconButton>
                            </Box>
                         </ListItem>
                         <Divider light />
