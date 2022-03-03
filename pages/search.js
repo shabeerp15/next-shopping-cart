@@ -13,7 +13,6 @@ import {
 import CancelIcon from '@mui/icons-material/Cancel'
 import { useRouter } from 'next/router'
 import React, { useContext } from 'react'
-import Layout from '../components/Layout'
 import db from '../utils/db'
 import Product from '../models/Product'
 import useStyles from '../utils/styles'
