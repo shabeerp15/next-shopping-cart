@@ -23,6 +23,8 @@ const ShippingScreen = () => {
       cart: { shippingAddress },
    } = state
 
+   const { location } = shippingAddress
+
    useEffect(() => {
       if (!userInfo) {
          router.push('/login?redirect=/shipping')
@@ -53,6 +55,27 @@ const ShippingScreen = () => {
          })
       )
       router.push('/payment')
+   }
+
+   const chooseLocationHandler = () => {
+      const fullName = getValues('fullName')
+      const address = getValues('address')
+      const city = getValues('city')
+      const postalCode = getValues('postalCode')
+      const country = getValues('country')
+      dispatch({
+         type: 'SAVE_SHIPPING_ADDRESS',
+         payload: { fullName, address, city, postalCode, country },
+      })
+      Cookies.set('shippingAddress', JSON.stringify({
+         fullName,
+         address,
+         city,
+         postalCode,
+         country,
+         location,
+      }))
+      router.push('/map')
    }
 
    return (
@@ -212,12 +235,12 @@ const ShippingScreen = () => {
                   <Button
                      variant='contained'
                      type='button'
-                     // onClick={chooseLocationHandler}
+                     onClick={chooseLocationHandler}
                   >
                      Choose on map
                   </Button>
                   <Typography>
-                     {/* {location.lat && `${location.lat}, ${location.lat}`} */}
+                     {location.lat && `${location.lat}, ${location.lat}`}
                   </Typography>
                </ListItem>
                <ListItem>
