@@ -5,7 +5,6 @@ import NextLink from 'next/link'
 import React, { useEffect, useContext, useReducer } from 'react'
 import { getError } from '../../utils/error'
 import { Store } from '../../utils/Store'
-import Layout from '../../components/Layout'
 import useStyles from '../../utils/styles'
 import Meta from '../../components/Meta'
 import {

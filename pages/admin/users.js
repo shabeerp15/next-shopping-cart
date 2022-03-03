@@ -21,7 +21,6 @@ import {
 } from '@mui/material'
 import { getError } from '../../utils/error'
 import { Store } from '../../utils/Store'
-import Layout from '../../components/Layout'
 import useStyles from '../../utils/styles'
 import { toast } from 'react-toastify'
 import Meta from '../../components/Meta'
