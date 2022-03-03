@@ -1,5 +1,5 @@
 import '../styles/globals.css'
-import Layout from '../components/Layout'
+
 import { useEffect } from 'react'
 import { StoreProvider } from '../utils/Store'
 import { ToastContainer } from 'react-toastify'
@@ -17,14 +17,14 @@ function MyApp({ Component, pageProps }) {
       <>
          <StoreProvider>
             <PayPalScriptProvider deferLoading={true}>
-               <Layout>
+               
                   <Component {...pageProps} />
                   <ToastContainer
                      position='top-center'
                      autoClose={1000}
                      pauseOnHover={false}
                   />
-               </Layout>
+               
             </PayPalScriptProvider>
          </StoreProvider>
       </>
