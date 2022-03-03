@@ -14,18 +14,54 @@ import {
    Button,
    Menu,
    MenuItem,
+   Box,
+   IconButton,
+   Drawer,
+   List,
+   ListItem,
+   Divider,
+   ListItemText,
 } from '@mui/material'
 import useStyles from '../utils/styles'
 import { Store } from '../utils/Store'
 import Meta from './Meta'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/router'
+import { getError } from '../utils/error'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import MenuIcon from '@mui/icons-material/Menu';
+import CancelIcon  from '@mui/icons-material/Cancel';
 
 const Layout = ({ children }) => {
    const router = useRouter()
    const { state, dispatch } = useContext(Store)
    const { darkMode, cart, userInfo } = state
    const classes = useStyles()
+
+   const [sidbarVisible, setSidebarVisible] = useState(false)
+   const sidebarOpenHandler = () => {
+      setSidebarVisible(true)
+   }
+   const sidebarCloseHandler = () => {
+      setSidebarVisible(false)
+   }
+
+   const [categories, setCategories] = useState([])
+
+   const fetchCategories = async () => {
+      try {
+         const { data } = await axios.get(`/api/products/categories`)
+         setCategories(data)
+      } catch (err) {
+         toast.error(getError(err))
+      }
+   }
+
+   useEffect(() => {
+      fetchCategories()
+   }, [])
+
    const theme = createTheme({
       typography: {
          h1: {
@@ -83,14 +119,64 @@ const Layout = ({ children }) => {
          <ThemeProvider theme={theme}>
             <CssBaseline />
             <AppBar position='static' className={classes.navbar}>
-               <Toolbar>
-                  <NextLink href='/' passHref>
-                     <Link style={{ textDecoration: 'none' }}>
-                        <Typography className={classes.brand}>
-                           Amazon
-                        </Typography>
-                     </Link>
-                  </NextLink>
+               <Toolbar className={classes.toolbar}>
+                  <Box display='flex' alignItems='center'>
+                     <IconButton
+                        edge='start'
+                        aria-label='open drawer'
+                        onClick={sidebarOpenHandler}
+                     >
+                        <MenuIcon className={classes.navbarButton} />
+                     </IconButton>
+                     <NextLink href='/' passHref>
+                        <Link style={{ textDecoration: 'none' }}>
+                           <Typography className={classes.brand}>
+                              amazon
+                           </Typography>
+                        </Link>
+                     </NextLink>
+                  </Box>
+                  <Drawer
+                     anchor='left'
+                     open={sidbarVisible}
+                     onClose={sidebarCloseHandler}
+                  >
+                     <List>
+                        <ListItem>
+                           <Box
+                              display='flex'
+                              alignItems='center'
+                              justifyContent='space-between'
+                           >
+                              <Typography>Shopping by category</Typography>
+                              <IconButton
+                                 aria-label='close'
+                                 onClick={sidebarCloseHandler}
+                              >
+                                 <CancelIcon />
+                              </IconButton>
+                           </Box>
+                        </ListItem>
+                        <Divider light />
+                        {categories.map((category) => (
+                           <NextLink
+                              key={category}
+                              href={`/search?category=${category}`}
+                              passHref
+                           >
+                              <ListItem
+                                 button
+                                 component='a'
+                                 onClick={sidebarCloseHandler}
+                              >
+                                 <ListItemText
+                                    primary={category}
+                                 ></ListItemText>
+                              </ListItem>
+                           </NextLink>
+                        ))}
+                     </List>
+                  </Drawer>
                   <div className={classes.grow}></div>
                   <div>
                      <Switch
@@ -99,16 +185,18 @@ const Layout = ({ children }) => {
                      ></Switch>
                      <NextLink href='/cart' passHref>
                         <Link>
-                           {cart.cartItems.length > 0 ? (
-                              <Badge
-                                 badgeContent={cart.cartItems.length}
-                                 color='secondary'
-                              >
-                                 Cart
-                              </Badge>
-                           ) : (
-                              'Cart'
-                           )}
+                           <Typography component='span'>
+                              {cart.cartItems.length > 0 ? (
+                                 <Badge
+                                    badgeContent={cart.cartItems.length}
+                                    color='secondary'
+                                 >
+                                    Cart
+                                 </Badge>
+                              ) : (
+                                 'Cart'
+                              )}
+                           </Typography>
                         </Link>
                      </NextLink>
                      {userInfo ? (
@@ -161,7 +249,9 @@ const Layout = ({ children }) => {
                         </>
                      ) : (
                         <NextLink href='/login' passHref>
-                           <Link>Login</Link>
+                           <Link>
+                              <Typography component='span'>Login</Typography>
+                           </Link>
                         </NextLink>
                      )}
                   </div>
